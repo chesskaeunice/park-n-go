@@ -1,0 +1,1 @@
+<section class="shell page-intro"><span class="eyebrow">404 · WRONG TURN</span><h1>Let's find your way.</h1><p>This page doesn’t exist. Your next stop is just a click away.</p><a class="button primary" href="<?= e(url()) ?>">Back to home →</a></section>

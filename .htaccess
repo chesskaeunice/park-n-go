@@ -1,0 +1,3 @@
+# Defense in depth for XAMPP's default htdocs directory.
+# Prefer the documented virtual host pointing directly to public/.
+Require all denied

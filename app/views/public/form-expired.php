@@ -1,0 +1,1 @@
+<section class="shell page-intro"><h1>Let's refresh that form.</h1><p>Your form expired or could not be verified. Reload the page and try again.</p><a class="button primary" href="<?= e(url(isset($routes[$page]) && $page !== 'logout' ? $page : 'login')) ?>">Open a fresh form →</a></section>

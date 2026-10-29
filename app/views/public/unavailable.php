@@ -1,0 +1,1 @@
+<section class="shell page-intro"><span class="eyebrow">SERVICE UNAVAILABLE</span><h1>A quick pause.</h1><p>Account services are temporarily unavailable. If you are setting up locally, start MySQL in XAMPP and follow the database setup instructions in README.md.</p><a class="button primary" href="<?= e(url()) ?>">Back to home →</a></section>

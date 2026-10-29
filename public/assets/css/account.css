@@ -1,0 +1,39 @@
+﻿/* Account views share the Light Midnight Electric palette. */
+.account-page { max-width: 600px; padding-top: 52px; padding-bottom: 35px; }
+.account-page h1 { margin: 14px 0 18px; font-size: 34px; }
+.account-page .content-card { padding: 34px; }
+.account-page .content-card > p { font-size: 14px; }
+.account-form { display: flex; flex-direction: column; gap: 9px; margin: 26px 0 22px; }
+.account-form label { margin-top: 9px; color: #334155; font-size: 13px; font-weight: 600; }
+.account-form input { width: 100%; min-height: 48px; padding: 11px 13px; border: 1px solid #CBD5E1; border-radius: 6px; background: white; color: var(--text); font-size: 15px; }
+.account-form input[readonly] { color: var(--muted); background: var(--panel); }
+.account-form small, .local-note { color: var(--muted); font-size: 12px; line-height: 1.8; }
+.account-form .button { margin-top: 16px; }
+.account-links { display: flex; flex-wrap: wrap; gap: 8px 24px; padding-top: 15px; border-top: 1px solid var(--border); font-size: 13px; color: var(--accent-strong); }
+.account-links a { display: inline-flex; align-items: center; min-height: 38px; }
+.account-links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.local-note { margin: 18px 0 0; overflow-wrap: anywhere; }
+.form-errors { padding: 13px 16px; border: 1px solid #FECACA; border-radius: 7px; background: #FEF2F2; color: #991B1B; font-size: 13px; }
+.form-errors ul { margin: 0; padding-left: 17px; }
+.flash-message { margin-top: 24px; padding: 14px 18px; border: 1px solid #A7F3D0; border-radius: 7px; background: #F0FDF4; color: #065F46; font-size: 14px; }
+.logout-form { margin: 0; }
+.logout-form button { min-height: 44px; padding: 9px 13px; border: 0; border-radius: 6px; background: white; color: #475569; font-size: 13px; }
+.logout-form button:hover { color: var(--accent-strong); background: var(--panel); }
+.driver-bottom-nav { display: none; }
+
+@media (max-width: 780px) {
+    .logout-form button { width: 100%; text-align: left; padding-left: 13px; font-size: 14px; }
+    .driver-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9; justify-content: space-around; gap: 8px; padding: 7px 12px calc(7px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: white; }
+    .driver-bottom-nav > a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 76px; min-height: 48px; padding: 3px 10px; color: #475569; font-size: 19px; }
+    .driver-bottom-nav > a span { font-size: 11px; }
+    .driver-bottom-nav > a[aria-current] { color: var(--accent-strong); }
+    body:has(.driver-bottom-nav) { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
+    .account-page { padding-top: 35px; }
+}
+
+@media (max-width: 440px) {
+    .account-page .content-card { padding: 25px 22px; }
+    .account-page h1 { font-size: 29px; }
+    .account-form input { font-size: 16px; }
+    .account-links { gap: 6px 18px; font-size: 12px; }
+}

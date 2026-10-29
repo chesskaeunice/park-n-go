@@ -1,0 +1,1 @@
+<section class="shell page-intro"><h1>That action is unavailable.</h1><p>Use the links and forms on the website to continue.</p><a class="button primary" href="<?= e(url()) ?>">Back to home →</a></section>

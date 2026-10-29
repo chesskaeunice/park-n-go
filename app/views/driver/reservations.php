@@ -1,0 +1,9 @@
+<section class="shell page-intro"><span class="eyebrow">Your parking plans</span><h1>My reservations.</h1><p>Review pending checkout holds and your reservation history.</p><a class="button primary" href="<?= e(url('facilities')) ?>">Find parking</a></section>
+<section class="shell booking-section">
+<?php if ($pageData['errors']): ?><div class="form-errors" role="alert"><?php foreach ($pageData['errors'] as $error): ?><p><?= e($error) ?></p><?php endforeach; ?></div>
+<?php elseif (!$pageData['rows']): ?><div class="empty-state"><h2>No reservations on this page</h2><p>Choose a facility and space to start a checkout hold.</p></div>
+<?php else: ?><div class="table-scroll"><table><thead><tr><th scope="col">Reservation</th><th scope="col">Arrival (Manila)</th><th scope="col">Status</th><th scope="col">Estimate</th><th scope="col">Details</th></tr></thead><tbody>
+<?php foreach (array_slice($pageData['rows'],0,20) as $reservation): ?><tr><td><?= e($reservation['reference']) ?><br><small><?= e($reservation['facility_name'].' · '.$reservation['slot_label']) ?></small></td><td><?= e((new DateTimeImmutable($reservation['starts_at'],new DateTimeZone('UTC')))->setTimezone(new DateTimeZone('Asia/Manila'))->format('M j, Y g:i A')) ?></td><td><?= e(ucfirst($reservation['status'])) ?></td><td>₱<?= number_format((int)$reservation['estimated_centavos']/100,2) ?></td><td><a class="text-link" href="<?= e(url('reservation-checkout',['id'=>$reservation['id']])) ?>">View</a></td></tr><?php endforeach; ?>
+</tbody></table></div><?php endif; ?>
+<nav class="inventory-tabs" aria-label="Reservation history pages"><?php if ($pageData['pageNumber']>1): ?><a href="<?= e(url('reservations',['p'=>$pageData['pageNumber']-1])) ?>">Previous</a><?php endif; ?><?php if (count($pageData['rows'])>20): ?><a href="<?= e(url('reservations',['p'=>$pageData['pageNumber']+1])) ?>">Next</a><?php endif; ?></nav>
+</section>

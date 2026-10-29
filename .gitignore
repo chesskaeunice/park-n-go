@@ -1,0 +1,30 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Dependencies
+/vendor/
+node_modules/
+
+# Logs
+*.log
+/storage/logs/*
+!/storage/logs/.gitkeep
+
+# Temporary storage
+/storage/mail/*
+!/storage/mail/.gitkeep
+/storage/sessions/*
+!/storage/sessions/.gitkeep
+/storage/test-db/
+/storage/test-runtime/
+
+# Editor settings
+.idea/
+.vscode/
+
+# Local database files
+*.sqlite
+*.sqlite3
+*.sql.gz

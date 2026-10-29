@@ -1,0 +1,1 @@
+<section class="shell page-intro"><span class="eyebrow">403 · ACCESS DENIED</span><h1>This area needs a different role.</h1><p>Your account does not have permission to access this page.</p><a class="button primary" href="<?= e(url(\ParkNGo\Services\Auth::dashboard(\ParkNGo\Services\Auth::user()['role']))) ?>">Back to your dashboard →</a></section>
