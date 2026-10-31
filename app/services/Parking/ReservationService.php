@@ -160,6 +160,11 @@ final class ReservationService
             if (!in_array($row['status'],['pending','confirmed'],true)) throw new ReservationConflict('Only pending or eligible confirmed reservations can be cancelled.');
             $find=$pdo->prepare("SELECT id FROM parking_sessions WHERE reservation_id=? AND status='active' FOR UPDATE");$find->execute([$id]);if ($find->fetch()) throw new ReservationConflict('A parking session is active. This reservation cannot be cancelled.');
             $find=$pdo->prepare("SELECT id FROM payment_transactions WHERE reservation_id=? AND status='paid' FOR UPDATE");$find->execute([$id]);if ($find->fetch()) throw new ReservationConflict('Paid reservations need a verified refund workflow. Please contact the facility.');
+            $find=$pdo->prepare("SELECT local_status FROM payment_attempts WHERE reservation_id=? AND payment_type IN ('INITIAL_RESERVATION','PARKING_EXTENSION','OVERTIME_SETTLEMENT') AND local_status IN ('created','checkout_created','pending_verification','verified','reconciliation') ORDER BY id DESC FOR UPDATE");$find->execute([$id]);
+            foreach ($find->fetchAll(\PDO::FETCH_COLUMN) as $paymentStatus) {
+                if (in_array($paymentStatus, ['verified','reconciliation'], true)) throw new ReservationConflict('This reservation has a verified or reconciling payment and cannot be cancelled without an approved refund workflow.');
+                throw new ReservationConflict('Payment verification is still in progress. The reservation hold cannot be released until payment reaches a final state.');
+            }
             if ($row['status']==='confirmed') {
                 $snapshot=json_decode($row['rate_snapshot'],true,64,JSON_THROW_ON_ERROR);
                 if (!isset($snapshot['cancellation_cutoff_minutes'])) throw new ReservationConflict('Cancellation policy is unavailable for this older reservation. Contact the facility.');

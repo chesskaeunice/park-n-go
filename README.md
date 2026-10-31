@@ -1,17 +1,17 @@
 # Park n Go
 
-**Your Space. Your Pace.** A native PHP smart-parking application, developed in eight phases. Phases 1–4 are implemented: accounts/roles, database parking maps/inventory, reviewed fee estimates, temporary unpaid checkout holds, reservation history, and cancellation. Verified payments, confirmation, and QR entry are not enabled yet.
+**Your Space. Your Pace.** A native PHP smart-parking application, developed in eight phases. Phases 1–6 are implemented in local development: accounts/roles, database parking maps/inventory, reviewed fee estimates, reservation holds, Maya Sandbox checkout and server-side verification, QR tickets, parking sessions, scanning, and overtime foundations. Production payment deployment and final operational hardening are not complete.
 
-The current interface uses **Light Midnight Electric**: white backgrounds, clean typography, restrained indigo accents, and local HTML image placeholders. See [the visual changes and browser checks](docs/DESIGN_REFINEMENT.md). No image downloads or generated pictures are included. Phase 3 retains this theme and preserves existing data; see [Phase 3 implementation and testing](docs/PHASE_3.md).
+The current interface is a **mobile app UI** in the sage palette (primary `#8B9A6E`, white background, surface `#EAE2D6`, neutral `#EEEEEE`). It has a phone-width app shell with bottom tabs, an animated launch screen, a four-step onboarding tour on first launch, a stall-style parking map, and installable-app support. See [docs/MOBILE_UI.md](docs/MOBILE_UI.md) for details, replay options (`&tour=1`, `&splash=1`), and the files changed. The earlier Light Midnight Electric notes remain in [docs/DESIGN_REFINEMENT.md](docs/DESIGN_REFINEMENT.md). All illustrations and fonts are local files; nothing is loaded from external sites. Phase 3 retains this theme and preserves existing data; see [Phase 3 implementation and testing](docs/PHASE_3.md).
 
 ## Run in XAMPP
 
-Requires PHP 8.2+ (`pdo_mysql`, `mbstring`), Apache, and MySQL/MariaDB from XAMPP. No Composer install is needed yet; the application has a native autoloader.
+Requires PHP 8.2+ (`pdo_mysql`, `mbstring`, `gd`), Apache, Composer, and MySQL/MariaDB from XAMPP. Composer supplies the local QR image generator.
 
 1. Keep the project at `C:\xampp\htdocs\park-n-go`.
 2. Start **Apache and MySQL** in XAMPP Control Panel.
 3. A local `.env` was created from `.env.example`. Check its database credentials and `APP_URL`. If setting up a fresh checkout, copy `.env.example` to `.env` first. Default XAMPP configuration is host `127.0.0.1`, port `3306`, user `root`, empty password, database `parkngo_db`.
-4. From the project directory, run `php database/migrate.php`, then `php database/seeders/development.php`. Migration creates the database and all tables. The local-only seeder prints randomly generated initial passwords for `driver@parkngo.test`, `attendant@parkngo.test`, and `admin@parkngo.test`. Save them privately. Rerunning the seeder preserves existing account passwords and roles.
+4. From the project directory, run `composer install`, `php database/migrate.php`, then `php database/seeders/development.php`. Migration creates the database and all tables. The local-only seeder prints randomly generated initial passwords for `driver@parkngo.test`, `attendant@parkngo.test`, and `admin@parkngo.test`. Save them privately. Rerunning the seeder preserves existing account passwords and roles.
 5. Open `http://localhost/park-n-go/public/`. Register a driver or log in with a seeded account. Accounts use dedicated dashboards according to role.
 
 The project's normal XAMPP database was not created automatically because the XAMPP MySQL service was stopped during implementation. Integration checks used a separate, private test instance on port 3308; the application `.env` remains configured for your normal XAMPP instance on port 3306.
@@ -57,7 +57,7 @@ For local password recovery, log out, open **Forgot password**, submit your emai
 
 For real delivery, configure an actual MTA or XAMPP-compatible mail relay, set `MAIL_TRANSPORT=mail` and a verified `MAIL_FROM`, and test delivery end to end. That external infrastructure and inbox delivery have **not** been verified. Nonlocal environments require HTTPS and do not allow log transport. No payment or mail-service credentials are included.
 
-See [docs/PHASE_2.md](docs/PHASE_2.md) for account-test commands and remaining verification limits. CIT 305 preparation is documented in [docs/integration/CIT_305.md](docs/integration/CIT_305.md): architecture diagram, service boundaries, PayMongo environment placeholders, and ten planned provider integration cases. PayMongo REST checkout and signed webhooks are **pending Phase 6**; no credentials are needed yet and no payment endpoint is enabled. Phase 3 was subsequently authorized and is documented in [docs/PHASE_3.md](docs/PHASE_3.md).
+See [docs/PHASE_2.md](docs/PHASE_2.md) for historical account-test details. Maya Sandbox setup uses the `MAYA_*` values in `.env`; the secret key remains server-side. Payment return verification can run locally without a public webhook endpoint, while signed webhook support remains available for deployed environments. Phase 3 and Phase 4 historical records are documented in [docs/PHASE_3.md](docs/PHASE_3.md) and [docs/PHASE_4.md](docs/PHASE_4.md).
 
 ## Phase 3 parking inventory
 
@@ -92,6 +92,12 @@ The Phase 2 continuation also fixes logout during database outages and checks se
 Get-ChildItem app,config,public,routes -Recurse -Filter *.php | ForEach-Object { php -l $_.FullName }
 ```
 
+## Phases 5 and 6
+
+QR tickets are issued only after an authoritative verified Maya payment. The driver ticket page renders a local QR image from the opaque token and retains a manual fallback code. Authorized attendants can validate entry and exit; active parking sessions track purchased time, facility-specific overtime rates, duplicate scans, and ticket replay. Payment polling and signed Maya webhook fulfillment share the same idempotent service.
+
+Run the deterministic payment and QR checks with a separate database, for example `parkngo_phase6_test`, using `php tests/phase6-flow.php`. Run the actual Maya retrieval smoke test only with an explicitly selected Sandbox attempt using `php tests/phase6-payment-retrieval.php`; it must not be used as proof of production readiness.
+
 ## Unfinished
 
-Phases 5–8: payment-gated QR generation/camera scanning, actual parking sessions and final fees, PayMongo hosted sandbox REST/JSON payments and signed callbacks, confirmation, receipts/refunds, broader operational dashboards, reports, and the audit-log viewer. Account, inventory, and reservation audit events are persisted. No gateway callback or real provider exchange has been implemented or tested. The local availability JSON endpoint does not satisfy the external PayMongo integration requirement. Physical-device testing, HTTPS deployment, and real email delivery still need verification. This remains a development preview.
+Phases 7–8: broader operational dashboards, reports, receipts/refunds, actual overtime settlement, camera/physical-device validation, production HTTPS deployment, backup/restore evidence, monitoring, and final integration/deployment review. Maya remains Sandbox-only in this workspace. Physical-device testing, HTTPS deployment, and real email delivery still need verification. This remains a development preview.

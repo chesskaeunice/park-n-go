@@ -15,9 +15,9 @@ try {
     $data = (new ParkingInventory())->availability(ParkingController::id($_GET, 'facility_id'), ParkingController::id($_GET, 'floor_id'), $window);
     echo Json::encode(['data' => $data]);
 } catch (\InvalidArgumentException $error) {
-    http_response_code(422); echo json_encode(['error' => $error->getMessage()], JSON_THROW_ON_ERROR);
+    error_log('API request rejected: ' . $error->getMessage()); http_response_code(422); echo json_encode(['error' => 'Unable to complete the request.'], JSON_THROW_ON_ERROR);
 } catch (\OutOfBoundsException $error) {
-    http_response_code(404); echo json_encode(['error' => $error->getMessage()], JSON_THROW_ON_ERROR);
+    error_log('API resource not found: ' . $error->getMessage()); http_response_code(404); echo json_encode(['error' => 'The requested resource was not found.'], JSON_THROW_ON_ERROR);
 } catch (\Throwable $error) {
     error_log('Park n Go availability failed: ' . get_class($error));
     http_response_code(503); header('Content-Type: application/json; charset=UTF-8'); header('Cache-Control: no-store');
