@@ -2,6 +2,7 @@
   "name": "parkngo/park-n-go",
   "description": "Park n Go native PHP parking reservation application",
   "type": "project",
-  "require": { "php": "^8.2", "ext-pdo": "*", "ext-pdo_mysql": "*", "ext-mbstring": "*" },
+  "require": { "php": "^8.2", "ext-pdo": "*", "ext-pdo_mysql": "*", "ext-mbstring": "*",
+    "endroid/qr-code": "6.0" },
   "autoload": { "classmap": ["app/controllers/", "app/services/", "app/middleware/", "app/models/"] }
 }

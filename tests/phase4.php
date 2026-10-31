@@ -82,7 +82,7 @@ try {
     $browser->request('reservation-review',['csrf'=>$csrf,'request_key'=>$requestKey,'estimated_centavos'=>'1','user_id'=>$users['b']['id'],'status'=>'confirmed']);check4($browser->status===303,'HTTP checkout creates pending hold');
     parse_str(parse_url($browser->headers['location'],PHP_URL_QUERY),$location);$httpId=(int)$location['id'];$saved=$service->detail($users['a']['id'],$httpId);check4((int)$saved['estimated_centavos']===7500&&$saved['status']==='pending'&&(int)$saved['user_id']===$users['a']['id'],'tampered amount, owner, and confirmation ignored');
     $browser->request('reservation-review',['csrf'=>$csrf,'request_key'=>$requestKey]);check4($browser->status===303&&str_contains($browser->headers['location'],'id='.$httpId),'repeated HTTP submission reuses reservation');
-    $browser->request('reservation-checkout&id='.$httpId);check4($browser->status===200&&str_contains($browser->body,'Payment integration is pending')&&!str_contains($browser->body,'name="card"'),'checkout clearly shows payment unavailable');
+    $browser->request('reservation-checkout&id='.$httpId);check4($browser->status===200&&str_contains($browser->body,'Maya Checkout sandbox')&&str_contains($browser->body,'payment-start'),'checkout exposes the Maya payment action without trusting browser payment data');
     $browser->request('reservation-cancel&id='.$httpId);check4($browser->status===405,'GET cannot cancel reservation');
     $browser->request('reservation-cancel',['csrf'=>$csrf,'id'=>(string)$httpId]);check4($browser->status===303,'owner cancellation works through HTTP');
     $browser->request('reservations');check4(str_contains($browser->body,$saved['reference']),'reservation history includes own reference');

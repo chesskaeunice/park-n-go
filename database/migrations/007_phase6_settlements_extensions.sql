@@ -1,0 +1,42 @@
+CREATE TABLE parking_overtime_settlements (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ parking_session_id BIGINT UNSIGNED NOT NULL,
+ payment_attempt_id BIGINT UNSIGNED NULL UNIQUE,
+ interval_start DATETIME NOT NULL,
+ interval_end DATETIME NOT NULL,
+ billed_seconds INT UNSIGNED NOT NULL,
+ rate_centavos INT UNSIGNED NOT NULL,
+ amount_centavos INT UNSIGNED NOT NULL,
+ status ENUM('pending','verified','reconciliation','failed','expired','cancelled') NOT NULL DEFAULT 'pending',
+ verified_at DATETIME NULL,
+ grace_until DATETIME NULL,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ INDEX idx_overtime_session_status (parking_session_id, status),
+ FOREIGN KEY (parking_session_id) REFERENCES parking_sessions(id),
+ FOREIGN KEY (payment_attempt_id) REFERENCES payment_attempts(id),
+ CHECK (interval_end > interval_start),
+ CHECK (billed_seconds > 0),
+ CHECK (amount_centavos > 0)
+) ENGINE=InnoDB;
+
+CREATE TABLE parking_extensions (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ parking_session_id BIGINT UNSIGNED NOT NULL,
+ payment_attempt_id BIGINT UNSIGNED NULL UNIQUE,
+ duration_minutes SMALLINT UNSIGNED NOT NULL,
+ amount_centavos INT UNSIGNED NOT NULL,
+ rate_centavos INT UNSIGNED NOT NULL,
+ paid_until_before DATETIME NOT NULL,
+ requested_paid_until DATETIME NOT NULL,
+ status ENUM('pending','verified','reconciliation','failed','expired','cancelled') NOT NULL DEFAULT 'pending',
+ verified_at DATETIME NULL,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ INDEX idx_extension_session_status (parking_session_id, status),
+ FOREIGN KEY (parking_session_id) REFERENCES parking_sessions(id),
+ FOREIGN KEY (payment_attempt_id) REFERENCES payment_attempts(id),
+ CHECK (duration_minutes IN (60,120,180,240,300,360)),
+ CHECK (amount_centavos > 0),
+ CHECK (requested_paid_until > paid_until_before)
+) ENGINE=InnoDB;

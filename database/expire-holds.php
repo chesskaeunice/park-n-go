@@ -6,4 +6,6 @@ require dirname(__DIR__).'/app/bootstrap.php';
 try {
     $count=(new \ParkNGo\Services\Parking\ReservationService())->expire(500);
     echo "Expired $count pending reservations. Run every minute for prompt history updates.\n";
+    $sessionCount=(new \ParkNGo\Services\Payments\PaymentService())->expireSessionCheckouts();
+    echo "Expired $sessionCount lapsed overtime or extension checkouts.\n";
 } catch (Throwable $error) { fwrite(STDERR,'Hold expiry failed: '.get_class($error).". Check the database configuration.\n");exit(1); }

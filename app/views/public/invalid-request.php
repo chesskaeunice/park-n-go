@@ -1,1 +1,1 @@
-<section class="shell page-intro"><h1>Check your request.</h1><p><?= e($requestError) ?></p><a class="button primary" href="<?= e(url('facilities')) ?>">Explore parking</a></section>
+<section class="empty-state page-state"><span class="state-icon"><?= ui_icon('alert', 30) ?></span><h1 class="h2">Check your request.</h1><p><?= e(ui_error_message($requestError ?? null)) ?></p><a class="button primary" href="<?= e(url('facilities')) ?>">Explore parking</a></section>

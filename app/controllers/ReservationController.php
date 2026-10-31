@@ -4,6 +4,7 @@ namespace ParkNGo\Controllers;
 
 use ParkNGo\Services\{Auth, RateLimiter};
 use ParkNGo\Services\Parking\{AvailabilityWindow, ReservationConflict, ReservationService};
+use ParkNGo\Services\Payments\PaymentService;
 
 final class ReservationController
 {
@@ -12,6 +13,53 @@ final class ReservationController
         $user=Auth::user();$service=new ReservationService();$config=require BASE_PATH.'/config/reservations.php';
         $errors=[];$quote=null;$reviewLink=url('facilities');$reservation=null;$rows=[];$pageNumber=1;
         try {
+            if ($page === 'payment-start') {
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new \InvalidArgumentException('Payment requests must use POST.');
+                $redirectUrl = (new PaymentService())->startInitialReservationPayment((int) $user['id'], ParkingController::id($_POST, 'id'));
+                header('Location: ' . $redirectUrl, true, 303); exit;
+            }
+            if ($page === 'payment-refresh') {
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new \InvalidArgumentException('Payment refresh requests must use POST.');
+                if (!RateLimiter::consume('payment-refresh', (string) $user['id'], 12, 900)) {
+                    http_response_code(429); header('Retry-After: 900'); throw new \InvalidArgumentException('Too many payment checks. Please wait before trying again.');
+                }
+                $reference = input('reference');
+                if (!preg_match('/^PNGO-[A-F0-9]{24}$/D', $reference)) throw new \InvalidArgumentException('Invalid payment reference.');
+                $attempt = (new PaymentService())->attempt((int)$user['id'], $reference);
+                (new PaymentService())->verifyPayment((int) $user['id'], $reference);
+                redirect('payment-return', ['reference' => $reference, 'checked' => '1']);
+            }
+            if ($page === 'payment-return') {
+                $reference = is_string($_GET['reference'] ?? null) ? trim($_GET['reference']) : '';
+                if (!preg_match('/^PNGO-[A-F0-9]{24}$/D', $reference)) throw new \InvalidArgumentException('Invalid payment reference.');
+                if (($_GET['checked'] ?? '') === '1') {
+                    $payment = (new PaymentService())->attempt((int) $user['id'], $reference);
+                } elseif (!RateLimiter::consume('payment-return-check', (string) $user['id'], 12, 900)) {
+                    $errors[] = 'Payment status checks are temporarily limited. Use Refresh later.';
+                    $payment = (new PaymentService())->attempt((int) $user['id'], $reference);
+                } else {
+                    $payment = (new PaymentService())->verifyPayment((int) $user['id'], $reference);
+                }
+                return compact('errors','quote','reviewLink','reservation','rows','pageNumber','config') + ['payment' => $payment];
+            }
+            if ($page === 'overtime-start' || $page === 'extension-start') {
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new \InvalidArgumentException('Payment requests must use POST.');
+                try {
+                    if (!RateLimiter::consume('session-payment-start', (string) $user['id'], 20, 900)) throw new \InvalidArgumentException('Too many payment attempts. Please wait before trying again.');
+                    $sessionId = ParkingController::id($_POST, 'session_id');
+                    $payment = new PaymentService();
+                    $redirectUrl = $page === 'overtime-start'
+                        ? $payment->startOvertimeSettlement((int)$user['id'], $sessionId)
+                        : $payment->startExtensionPayment((int)$user['id'], $sessionId, is_array($_POST['blocks'] ?? null) ? $_POST['blocks'] : []);
+                } catch (\InvalidArgumentException|\OutOfBoundsException $error) {
+                    $_SESSION['session_payment_error'] = $error->getMessage(); redirect('dashboard');
+                } catch (\RuntimeException $error) {
+                    if ($error instanceof \PDOException) throw $error;
+                    // Provider details stay in the private log; the attempt has already been marked failed.
+                    $_SESSION['session_payment_error'] = 'Maya checkout is temporarily unavailable. No payment was taken; please try again later.'; redirect('dashboard');
+                }
+                header('Location: ' . $redirectUrl, true, 303); exit;
+            }
             if ($page==='reservations') {
                 $pageNumber=ParkingController::id($_GET,'p',1);
                 if ($pageNumber>10000) throw new \InvalidArgumentException('Choose a valid history page.');

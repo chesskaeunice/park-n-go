@@ -1,0 +1,1 @@
+<section class="empty-state page-state"><span class="eyebrow">403 · ACCESS DENIED</span><h1 class="h2">This kiosk cannot open that area.</h1><p>Use the designated kiosk pages for this browser.</p><a class="button primary" href="<?= e(url('kiosk-home')) ?>">Back to kiosk status</a></section>

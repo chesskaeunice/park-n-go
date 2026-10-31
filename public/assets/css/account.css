@@ -1,39 +1,27 @@
-﻿/* Account views share the Light Midnight Electric palette. */
-.account-page { max-width: 600px; padding-top: 52px; padding-bottom: 35px; }
-.account-page h1 { margin: 14px 0 18px; font-size: 34px; }
-.account-page .content-card { padding: 34px; }
-.account-page .content-card > p { font-size: 14px; }
-.account-form { display: flex; flex-direction: column; gap: 9px; margin: 26px 0 22px; }
-.account-form label { margin-top: 9px; color: #334155; font-size: 13px; font-weight: 600; }
-.account-form input { width: 100%; min-height: 48px; padding: 11px 13px; border: 1px solid #CBD5E1; border-radius: 6px; background: white; color: var(--text); font-size: 15px; }
-.account-form input[readonly] { color: var(--muted); background: var(--panel); }
-.account-form small, .local-note { color: var(--muted); font-size: 12px; line-height: 1.8; }
-.account-form .button { margin-top: 16px; }
-.account-links { display: flex; flex-wrap: wrap; gap: 8px 24px; padding-top: 15px; border-top: 1px solid var(--border); font-size: 13px; color: var(--accent-strong); }
-.account-links a { display: inline-flex; align-items: center; min-height: 38px; }
-.account-links a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.local-note { margin: 18px 0 0; overflow-wrap: anywhere; }
-.form-errors { padding: 13px 16px; border: 1px solid #FECACA; border-radius: 7px; background: #FEF2F2; color: #991B1B; font-size: 13px; }
-.form-errors ul { margin: 0; padding-left: 17px; }
-.flash-message { margin-top: 24px; padding: 14px 18px; border: 1px solid #A7F3D0; border-radius: 7px; background: #F0FDF4; color: #065F46; font-size: 14px; }
+/* Account screens: log in, register, password recovery, profile and staff forms. */
+.auth { display: flex; flex-direction: column; gap: 10px; padding-top: 8px; }
+.auth-logo { width: 64px; height: 64px; margin-bottom: 4px; animation: pop .6s cubic-bezier(.2, .9, .3, 1.35) both; }
+.auth > .eyebrow { margin: 4px 0 0; }
+.auth > p { font-size: 15px; }
+.account-form { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 4px; }
+.account-form label { margin-top: 8px; }
+.account-form label:first-of-type { margin-top: 0; }
+.account-form small, .local-note { color: var(--muted); font-size: 12.5px; line-height: 1.6; }
+.account-form .button { margin-top: 12px; }
+.account-form textarea { min-height: 110px; resize: vertical; }
+.account-form .checkbox-label { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-weight: 500; }
+.account-form .checkbox-label input { width: 20px; height: 20px; accent-color: var(--primary); }
+.card .account-form input:not([type="checkbox"]), .card .account-form select, .card .account-form textarea,
+.content-card .account-form input:not([type="checkbox"]), .content-card .account-form select, .content-card .account-form textarea { background-color: #fff; }
+.forgot-link { align-self: flex-end; margin-top: 4px; color: var(--primary-dark); font-size: 13.5px; font-weight: 600; min-height: 32px; display: inline-flex; align-items: center; }
+.divider { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--divider); }
+.account-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; padding-top: 12px; border-top: 1px solid var(--divider); color: var(--primary-dark); font-size: 14px; font-weight: 600; }
+.account-links a { display: inline-flex; align-items: center; min-height: 40px; }
+.local-note { margin-top: 6px; overflow-wrap: anywhere; }
+.local-note code { padding: 1px 6px; border-radius: 6px; background: var(--neutral); }
+.flash-message { padding: 12px 14px; border-radius: 16px; background: var(--primary-soft); color: var(--primary-dark); font-size: 14px; }
 .logout-form { margin: 0; }
-.logout-form button { min-height: 44px; padding: 9px 13px; border: 0; border-radius: 6px; background: white; color: #475569; font-size: 13px; }
-.logout-form button:hover { color: var(--accent-strong); background: var(--panel); }
-.driver-bottom-nav { display: none; }
-
-@media (max-width: 780px) {
-    .logout-form button { width: 100%; text-align: left; padding-left: 13px; font-size: 14px; }
-    .driver-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9; justify-content: space-around; gap: 8px; padding: 7px 12px calc(7px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: white; }
-    .driver-bottom-nav > a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 76px; min-height: 48px; padding: 3px 10px; color: #475569; font-size: 19px; }
-    .driver-bottom-nav > a span { font-size: 11px; }
-    .driver-bottom-nav > a[aria-current] { color: var(--accent-strong); }
-    body:has(.driver-bottom-nav) { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
-    .account-page { padding-top: 35px; }
-}
-
-@media (max-width: 440px) {
-    .account-page .content-card { padding: 25px 22px; }
-    .account-page h1 { font-size: 29px; }
-    .account-form input { font-size: 16px; }
-    .account-links { gap: 6px 18px; font-size: 12px; }
-}
+.logout-form button { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 58px; padding: 0 14px; border: 0; border-radius: 18px; background: var(--neutral); color: var(--ink); font-size: 16px; font-weight: 500; text-align: left; }
+.logout-form button:hover { background: #E6E6E6; }
+.logout-form .menu-icon { color: var(--danger); }
